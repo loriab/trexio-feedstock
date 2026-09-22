@@ -3,8 +3,7 @@ schema_version: 1
 context:
   name: "trexio"
   version: "2.6.1"
-  #mpi_prefix: ${{ "nompi" if mpi == "nompi" else "mpi_" + mpi }}
-  mpi_prefix: "nompi"
+  mpi_prefix: ${{ "nompi" if mpi == "nompi" else "mpi_" + mpi }}
 
 recipe:
   name: ${{ name }}
@@ -19,6 +18,8 @@ build:
   number: ${{ 4 + (100 if mpi == "nompi" else 0) }}
   skip:
     - win
+    - aarch64
+    - ppc64le
 
 outputs:
   - package:
@@ -70,6 +71,7 @@ outputs:
         - ${{ compiler("c") }}
         - swig
       host:
+        - swig
         - python
         - numpy
         - ${{ pin_subpackage("trexio", exact=True) }}
