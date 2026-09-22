@@ -1,7 +1,7 @@
 mpi:
   - nompi
-  #- mpich
-  #- openmpi
+  - mpich
+  - openmpi
 
 c_stdlib:
   - sysroot  # [linux]

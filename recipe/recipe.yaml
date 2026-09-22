@@ -22,11 +22,9 @@ source:
 
 build:
   # Prioritize nompi via build number.
-  number: ${{ 4 + (100 if mpi == "nompi" else 0) }}
+  number: ${{ 5 + (100 if mpi == "nompi" else 0) }}
   skip:
     - win
-    - aarch64
-    - ppc64le
 
 outputs:
   - package:
