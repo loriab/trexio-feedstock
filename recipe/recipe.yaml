@@ -29,6 +29,7 @@ outputs:
 
     requirements:
       build:
+        - ${{ stdlib("c") }}
         - ${{ compiler("c") }}
         - ${{ compiler("fortran") }}
         - if: mpi != "nompi"
@@ -53,6 +54,33 @@ outputs:
             - trexio.h
           lib:
             - libtrexio
+
+  - package:
+      name: pytrexio
+
+    build:
+      script:
+        - cp "$RECIPE_DIR/build_against_installed.sh" "$SRC_DIR/python/"
+        - bash "$SRC_DIR/python/build_against_installed.sh"
+
+    requirements:
+      build:
+        - ${{ stdlib("c") }}
+        - ${{ compiler("c") }}
+        - swig
+      host:
+        - python
+        - numpy
+        - ${{ pin_subpackage("trexio", exact=True) }}
+      run:
+        - python
+        - numpy
+        - ${{ pin_subpackage("trexio", exact=True) }}
+
+    tests:
+      - python:
+          imports:
+            - trexio
 
 about:
   homepage: https://github.com/TREX-CoE/trexio
