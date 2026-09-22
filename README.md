@@ -1,5 +1,5 @@
-About trexio-feedstock
-======================
+About pytrexio-feedstock
+========================
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/trexio-feedstock/blob/main/LICENSE.txt)
 
@@ -96,54 +96,99 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-pytrexio-green.svg)](https://anaconda.org/conda-forge/pytrexio) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/pytrexio.svg)](https://anaconda.org/conda-forge/pytrexio) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pytrexio.svg)](https://anaconda.org/conda-forge/pytrexio) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/pytrexio.svg)](https://anaconda.org/conda-forge/pytrexio) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-trexio-green.svg)](https://anaconda.org/conda-forge/trexio) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/trexio.svg)](https://anaconda.org/conda-forge/trexio) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/trexio.svg)](https://anaconda.org/conda-forge/trexio) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/trexio.svg)](https://anaconda.org/conda-forge/trexio) |
 
-Installing trexio
-=================
+Installing pytrexio
+===================
 
-Installing `trexio` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+Installing `pytrexio` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
 
 ```
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `trexio` can be installed with `conda`:
+How to use
+----------
+
+<details>
+<summary>With conda</summary>
 
 ```
-conda install trexio
+conda install pytrexio trexio
 ```
 
-or with `mamba`:
+</details>
+
+<details>
+<summary>With mamba</summary>
 
 ```
-mamba install trexio
+mamba install pytrexio trexio
 ```
 
-It is possible to list all of the versions of `trexio` available on your platform with `conda`:
+</details>
+
+<details>
+<summary>With pixi</summary>
 
 ```
-conda search trexio --channel conda-forge
+# for adding to your local project
+pixi add pytrexio trexio
+# for installing globally
+pixi global install pytrexio trexio
 ```
 
-or with `mamba`:
+</details>
+
+Search package versions
+-----------------------
+
+It is possible to list all of the versions of `pytrexio` available on your platform:
+
+<details>
+<summary>With conda</summary>
 
 ```
-mamba search trexio --channel conda-forge
+conda search pytrexio --channel conda-forge
 ```
 
-Alternatively, `mamba repoquery` may provide more information:
+</details>
+
+<details>
+<summary>With mamba</summary>
+
+```
+mamba search pytrexio --channel conda-forge
+```
+
+</details>
+
+<details>
+<summary>With pixi</summary>
+
+```
+pixi search pytrexio --channel conda-forge
+```
+
+</details>
+
+<details>
+<summary>With mamba repoquery, which may provide more information</summary>
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search trexio --channel conda-forge
+mamba repoquery search pytrexio --channel conda-forge
 
-# List packages depending on `trexio`:
-mamba repoquery whoneeds trexio --channel conda-forge
+# List packages depending on `pytrexio`:
+mamba repoquery whoneeds pytrexio --channel conda-forge
 
-# List dependencies of `trexio`:
-mamba repoquery depends trexio --channel conda-forge
+# List dependencies of `pytrexio`:
+mamba repoquery depends pytrexio --channel conda-forge
 ```
+
+</details>
 
 
 About conda-forge
@@ -187,17 +232,17 @@ Terminology
                   produce the finished article (built conda distributions)
 
 
-Updating trexio-feedstock
-=========================
+Updating pytrexio-feedstock
+===========================
 
-If you would like to improve the trexio recipe or build a new
+If you would like to improve the pytrexio recipe or build a new
 package version, please fork this repository and submit a PR. Upon submission,
 your changes will be run on the appropriate platforms to give the reviewer an
 opportunity to confirm that the changes result in a successful build. Once
 merged, the recipe will be re-built and uploaded automatically to the
 `conda-forge` channel, whereupon the built conda packages will be available for
 everybody to install and use from the `conda-forge` channel.
-Note that all branches in the conda-forge/trexio-feedstock are
+Note that all branches in the conda-forge/pytrexio-feedstock are
 immediately built and any created packages are uploaded, so PRs should be based
 on branches in forks, and branches in the main repository should only be used to
 build distinct package versions.
