@@ -76,7 +76,7 @@ outputs:
 
         # The helper links the extension against the exact sibling TREXIO
         # package installed in $PREFIX.
-        - TREXIO_SOURCE_DIR="$PWD/python-source" bash "$RECIPE_DIR/build_against_installed.sh"
+        - TREXIO_SOURCE_DIR="$PWD/python-source" bash "$RECIPE_DIR/build-py.sh"
 
     requirements:
       build:
