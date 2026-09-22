@@ -67,7 +67,7 @@ outputs:
             - libtrexio
 
   - package:
-      name: pytrexio
+      name: trexio-python
 
     build:
       script:
