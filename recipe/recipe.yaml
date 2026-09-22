@@ -5,7 +5,7 @@ context:
   version: "2.6.1"
   mpi_prefix: ${{ "nompi" if mpi == "nompi" else "mpi_" + mpi }}
 
-package:
+recipe:
   name: ${{ name }}
   version: ${{ version }}
 
@@ -18,34 +18,41 @@ build:
   number: ${{ 4 + (100 if mpi == "nompi" else 0) }}
   skip:
     - win
-  string: mpi_${{ mpi }}_h${{ hash }}_${{ build_number }}
 
-requirements:
-  build:
-    - ${{ compiler("c") }}
-    - ${{ compiler("fortran") }}
-    - if: mpi != "nompi"
-      then: ${{ mpi }}
-    - cmake
-    - ninja
-    - pkg-config
-  host:
-    - if: mpi == "nompi"
-      then: hdf5 >=2.1
-      else:
-        - ${{ mpi }}
-        - "hdf5 * ${{ mpi_prefix }}_*"
-    - zlib
-  run:
-    - if: mpi != "nompi"
-      then: ${{ mpi }}
+outputs:
+  - package:
+      name: trexio
 
-tests:
-  - package_contents:
-      include:
-        - ${{ name }}.h
-      lib:
-        - lib${{ name }}
+    build:
+      string: mpi_${{ mpi }}_h${{ hash }}_${{ build_number }}
+      script: build-c
+
+    requirements:
+      build:
+        - ${{ compiler("c") }}
+        - ${{ compiler("fortran") }}
+        - if: mpi != "nompi"
+          then: ${{ mpi }}
+        - cmake
+        - ninja
+        - pkg-config
+      host:
+        - if: mpi == "nompi"
+          then: hdf5 >=2.1
+          else:
+            - ${{ mpi }}
+            - "hdf5 * ${{ mpi_prefix }}_*"
+        - zlib
+      run:
+        - if: mpi != "nompi"
+          then: ${{ mpi }}
+
+    tests:
+      - package_contents:
+          include:
+            - trexio.h
+          lib:
+            - libtrexio
 
 about:
   homepage: https://github.com/TREX-CoE/trexio
