@@ -4,9 +4,8 @@
 #
 # This is intentionally independent of Autoconf, Automake, and setup.py.  It is
 # suitable for a conda recipe after the C library has been installed into
-# $PREFIX.  The generated TREXIO sources must already exist in the source tree
-# (a release tarball has them; a developer checkout can generate them with the
-# normal Org-mode/CMake developer build).
+# $PREFIX.  It accepts either a generated developer tree or the Python sdist,
+# which already contains the SWIG-generated C wrapper and Python proxy.
 #
 # Optional environment variables:
 #   TREXIO_SOURCE_DIR    unpacked TREXIO source (default: $SRC_DIR or script/..)
@@ -32,7 +31,6 @@ else
 fi
 
 python_exe=${PYTHON:-python3}
-swig_exe=${SWIG:-swig}
 cc_exe=${CC:-cc}
 
 trexio_prefix=${TREXIO_PREFIX:-${PREFIX:-}}
@@ -54,22 +52,47 @@ else
   )
 fi
 
+if [[ -f ${source_dir}/src/pytrexio.i ]]; then
+  source_layout=developer
+  trexio_python=${source_dir}/src/trexio.py
+  package_source=${source_dir}/python/pytrexio
+elif [[ -f ${source_dir}/src/pytrexio_wrap.c ]]; then
+  source_layout=python-sdist
+  trexio_python=${source_dir}/trexio.py
+  package_source=${source_dir}/pytrexio
+else
+  echo "No SWIG interface or generated wrapper found under ${source_dir}/src" >&2
+  exit 2
+fi
+
 required_files=(
-  "${source_dir}/src/pytrexio.i"
-  "${source_dir}/src/numpy.i"
   "${source_dir}/src/trexio_s.h"
   "${source_dir}/src/trexio_private.h"
-  "${source_dir}/src/trexio.py"
-  "${source_dir}/python/pytrexio/__init__.py"
-  "${source_dir}/python/pytrexio/_version.py"
+  "${trexio_python}"
+  "${package_source}/__init__.py"
+  "${package_source}/_version.py"
   "${trexio_includedir}/trexio.h"
 )
+if [[ ${source_layout} == developer ]]; then
+  required_files+=("${source_dir}/src/numpy.i")
+else
+  required_files+=(
+    "${source_dir}/src/pytrexio_wrap.c"
+    "${package_source}/pytrexio.py"
+  )
+fi
 for required_file in "${required_files[@]}"; do
   if [[ ! -f ${required_file} ]]; then
     echo "Required generated/input file not found: ${required_file}" >&2
     exit 2
   fi
 done
+
+if [[ -f ${source_dir}/src/trexio.h ]] &&
+   ! cmp -s "${source_dir}/src/trexio.h" "${trexio_includedir}/trexio.h"; then
+  echo "Python source and installed TREXIO headers do not match." >&2
+  exit 2
+fi
 
 if [[ ! -f ${trexio_libdir}/libtrexio.so &&
       ! -f ${trexio_libdir}/libtrexio.dylib &&
@@ -98,14 +121,21 @@ extension_suffix=$(
 )
 python_platform=$("${python_exe}" -c 'import sys; print(sys.platform)')
 
-echo "Generating the SWIG wrapper"
-"${swig_exe}" \
-  -python \
-  -I"${source_dir}/src" \
-  -I"${trexio_includedir}" \
-  -outdir "${build_dir}/pytrexio" \
-  -o "${build_dir}/pytrexio_wrap.c" \
-  "${source_dir}/src/pytrexio.i"
+if [[ ${source_layout} == developer ]]; then
+  swig_exe=${SWIG:-swig}
+  echo "Generating the SWIG wrapper"
+  "${swig_exe}" \
+    -python \
+    -I"${source_dir}/src" \
+    -I"${trexio_includedir}" \
+    -outdir "${build_dir}/pytrexio" \
+    -o "${build_dir}/pytrexio_wrap.c" \
+    "${source_dir}/src/pytrexio.i"
+else
+  echo "Using the SWIG wrapper generated in the Python sdist"
+  cp "${source_dir}/src/pytrexio_wrap.c" "${build_dir}/pytrexio_wrap.c"
+  cp "${package_source}/pytrexio.py" "${build_dir}/pytrexio/pytrexio.py"
+fi
 
 echo "Compiling the Python extension"
 # CPPFLAGS and CFLAGS are intentionally word-split: conda compiler activation
@@ -157,11 +187,11 @@ ${cc_exe} ${LDFLAGS:-} \
 echo "Installing into ${site_packages}"
 install -d "${site_packages}/pytrexio"
 install -m 0644 \
-  "${source_dir}/src/trexio.py" \
+  "${trexio_python}" \
   "${site_packages}/trexio.py"
 install -m 0644 \
-  "${source_dir}/python/pytrexio/__init__.py" \
-  "${source_dir}/python/pytrexio/_version.py" \
+  "${package_source}/__init__.py" \
+  "${package_source}/_version.py" \
   "${build_dir}/pytrexio/pytrexio.py" \
   "${build_dir}/pytrexio/_pytrexio${extension_suffix}" \
   "${site_packages}/pytrexio/"
